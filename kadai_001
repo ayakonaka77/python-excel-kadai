@@ -1,0 +1,55 @@
+import openpyxl
+from datetime import datetime
+
+workbook=openpyxl.Workbook()
+sheet=workbook.active
+
+# 請求書のタイトル、宛名を入力
+sheet['B2'] = '請求書'
+sheet['B4'] = '株式会社ABC'
+sheet.merge_cells('B4:C4')
+sheet['B5'] = '〒101-0022 東京都千代田区神田練塀町300'
+sheet.merge_cells('B5:E5')
+sheet['B6'] = 'TEL:03-1234-5678 FAX:03-1234-5678'
+sheet.merge_cells('B6:E6')
+sheet['B7'] = '担当者名:鈴木一郎 様'
+sheet.merge_cells('B7:D7')
+
+# 請求書のNoと日付を入力
+sheet['F4'] = 'No.'
+sheet['F5'] = '日付'
+sheet['G4'] = '0001'
+today=datetime.today()
+sheet['G5'] = today.strftime('%Y/%m/%d')
+
+# E列の幅を変更
+sheet.column_dimensions['E'].width = 10
+
+# 表のデータを書き込む
+data = [
+    ['商品名','数量','単価','金額'],
+    ['商品A',2,10000,20000],
+    ['商品B',1,15000,15000],
+]
+
+# 任意のセル範囲を開始点とするため、開始点を特定
+start_col = 2 #B列
+start_row = 10
+
+for i, row in enumerate(data):
+    for j, value in enumerate(row):
+        sheet.cell(row=start_row + i, column=start_col + j).value = value
+
+# E13に商品Aの合計額E11と商品Bの合計額E12を足した金額を入力
+sheet['E13'].value=sheet['E11'].value + sheet['E12'].value
+
+sheet['B15'] = '小計'
+sheet['B16'] = '消費税'
+sheet['B17'] = '合計'
+
+sheet['E15'].value=sheet['E13'].value
+sheet['E16'].value=sheet['E15'].value*0.1
+sheet['E17'].value=sheet['E15'].value+sheet['E16'].value
+
+# 「請求書_ymd（現在日付）.xlsx」でファイルを保存
+workbook.save(f"請求書_{today.strftime('%Y%m%d')}.xlsx")
