@@ -11,7 +11,7 @@ df = pd.DataFrame()
 # ファイルを一つずつ処理する
 for file_name in file_list:
     # Excelファイルを読み込む
-    temp_df = pd.read_excel(file_name, skiprows=1)
+    temp_df = pd.read_excel(file_name, skiprows=0)
 
     # データフレームの列名を指定
     temp_df.columns = ['売上年', '商品', '金額（千円）']
